@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanika — MERN Stack Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #12121a;
+      --border:   #1e1e2e;
+      --text:     #e8e8f0;
+      --muted:    #6b6b8a;
+      --accent1:  #f97316;   /* electric orange */
+      --accent2:  #a855f7;   /* circuit violet */
+      --accent3:  #22d3ee;   /* signal cyan */
+      --mono: 'Space Mono', monospace;
+      --sans: 'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 4vw;
+      background: rgba(10,10,15,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--accent1);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent3); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 8rem 4vw 4rem;
+      position: relative;
+    }
+
+    /* circuit grid bg */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent2);
+    }
+
+    h1 {
+      font-size: clamp(3rem, 9vw, 7rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 .line-orange { color: var(--accent1); }
+    h1 .line-dim    { color: var(--muted); font-weight: 300; }
+
+    .hero-desc {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-desc strong { color: var(--text); font-weight: 500; }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent1);
+      color: #0a0a0f;
+      border: none;
+    }
+    .btn-primary:hover { background: #fb923c; transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent3); color: var(--accent3); transform: translateY(-2px); }
+
+    /* ── SECTION SHARED ── */
+    section {
+      padding: 6rem 4vw;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent3);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 3rem;
+    }
+
+    /* ── ABOUT ── */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+
+    .about-text p strong { color: var(--text); }
+
+    .skill-group { margin-bottom: 2rem; }
+
+    .skill-group-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface);
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .chip:hover { border-color: var(--accent1); color: var(--accent1); }
+
+    /* ── DSA ── */
+    #dsa { max-width: 1100px; margin: 0 auto; padding: 6rem 4vw; }
+
+    .dsa-summary {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .dsa-summary .big-num {
+      font-family: var(--mono);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      color: var(--accent1);
+      line-height: 1;
+    }
+
+    .dsa-summary .big-label {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 360px;
+    }
+
+    .dsa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .dsa-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .dsa-card:hover { transform: translateY(-4px); }
+
+    .dsa-card .platform-name {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dsa-card .arrow {
+      font-size: 0.9rem;
+      opacity: 0.5;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+
+    .dsa-card:hover .arrow { transform: translate(3px, -3px); opacity: 1; }
+
+    .dsa-card .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .dsa-card .stat-num {
+      font-family: var(--mono);
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .dsa-card .stat-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .dsa-card.leetcode { border-top: 2px solid #f97316; }
+    .dsa-card.leetcode .platform-name { color: #f97316; }
+    .dsa-card.leetcode .stat-num { color: #f97316; }
+
+    .dsa-card.gfg { border-top: 2px solid #22d3ee; }
+    .dsa-card.gfg .platform-name { color: #22d3ee; }
+    .dsa-card.gfg .stat-num { color: #22d3ee; }
+
+    .dsa-card.hackerrank { border-top: 2px solid #a855f7; }
+    .dsa-card.hackerrank .platform-name { color: #a855f7; }
+    .dsa-card.hackerrank .stat-num { color: #a855f7; }
+
+    .dsa-card.leetcode:hover { border-color: #f97316; }
+    .dsa-card.gfg:hover { border-color: #22d3ee; }
+    .dsa-card.hackerrank:hover { border-color: #a855f7; }
+
+    .dsa-card .stat-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+
+    .topics-row {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .topics-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.9rem;
+      width: 100%;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { max-width: 1100px; margin: 0 auto; padding: 6rem 4vw; }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+      cursor: default;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .project-card:hover { border-color: var(--accent2); transform: translateY(-4px); }
+    .project-card:hover::before { opacity: 1; }
+
+    .project-type {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .type-fullstack { color: var(--accent1); }
+    .type-frontend  { color: var(--accent3); }
+    .type-inprogress { color: var(--accent2); }
+
+    .project-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
+    .project-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .project-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── STATUS BADGE ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      border: 1px solid rgba(34,211,238,0.25);
+      color: var(--accent3);
+      margin-bottom: 1rem;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      text-align: center;
+      padding: 6rem 4vw 8rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .contact-headline {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .contact-headline span { color: var(--accent1); }
+
+    .contact-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 4vw;
+      width: calc(100% - 8vw);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .nav-links { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">Kanika</span>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#dsa">DSA</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">MongoDB · Express · React · Node</div>
+      <h1>
+        <span class="line-orange">Software Developer</span><br>
+        <span>Full Stack</span><br>
+        
+      </h1>
+      <p class="hero-desc">
+        Hi, I'm <strong>Kanika</strong> — a software engineer specializing in the
+        <strong>MERN stack</strong>. I design and build complete web applications,
+        from database schema to pixel-perfect UI.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">See My Work</a>
+        <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-eyebrow">// about me</div>
+    <h2 class="section-title">Where logic<br>meets interface.</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a <strong>software engineer</strong> specializing in the <strong>MERN stack</strong> — MongoDB, Express, React, and Node.js — with a passion for building applications that are functional, scalable, and genuinely useful.</p>
+        <p>I've built real-world systems end to end: from <strong>secure transaction logic</strong> in an ATM simulation to <strong>full CRUD workflows and state management</strong> in a job tracking app. I care about clean architecture as much as clean UI.</p>
+        <p>I'm constantly sharpening my fundamentals through <strong>DSA practice</strong> and looking for opportunities to build software that solves real problems.</p>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Open to internships & collaborations
+        </div>
+      </div>
+      <div class="about-skills">
+        <div class="skill-group">
+          <div class="skill-group-label">// Frontend</div>
+          <div class="skill-chips">
+            <span class="chip">React</span>
+            <span class="chip">JavaScript (ES6+)</span>
+            <span class="chip">HTML5 / CSS3</span>
+            <span class="chip">Redux</span>
+            <span class="chip">Tailwind CSS</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">// Backend</div>
+          <div class="skill-chips">
+            <span class="chip">Node.js</span>
+            <span class="chip">Express.js</span>
+            <span class="chip">REST APIs</span>
+            <span class="chip">JWT Auth</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">// Database & Tools</div>
+          <div class="skill-chips">
+            <span class="chip">MongoDB</span>
+            <span class="chip">Mongoose</span>
+            <span class="chip">Git / GitHub</span>
+            <span class="chip">Postman</span>
+            <span class="chip">VS Code</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- DSA -->
+  <section id="dsa">
+    <div class="section-eyebrow">// problem solving</div>
+    <h2 class="section-title">Data Structures<br>& Algorithms.</h2>
+
+    <div class="dsa-summary">
+      <div class="big-num">150+</div>
+      <div class="big-label">problems solved across multiple platforms — building strong fundamentals in DSA, one problem at a time.</div>
+    </div>
+
+    <div class="dsa-grid">
+      <a href="https://leetcode.com/" target="_blank" class="dsa-card leetcode">
+        <div class="platform-name">LeetCode <span class="arrow">↗</span></div>
+        <div class="stat-row">
+          <div class="stat-num">150+</div>
+          <div class="stat-tag">Solved</div>
+        </div>
+        <div class="stat-note">Arrays, Strings, Trees, DP, Graphs</div>
+      </a>
+
+      <a href="https://www.geeksforgeeks.org/" target="_blank" class="dsa-card gfg">
+        <div class="platform-name">GeeksforGeeks <span class="arrow">↗</span></div>
+        <div class="stat-row">
+          <div class="stat-num">30+</div>
+          <div class="stat-tag">Solved</div>
+        </div>
+        <div class="stat-note">Core DSA concepts & practice sets</div>
+      </a>
+
+      <a href="https://www.hackerrank.com/" target="_blank" class="dsa-card hackerrank">
+        <div class="platform-name">HackerRank <span class="arrow">↗</span></div>
+        <div class="stat-row">
+          <div class="stat-num">40+</div>
+          <div class="stat-tag">Solved</div>
+        </div>
+        <div class="stat-note">Problem solving & C challenges</div>
+      </a>
+    </div>
+
+    <div class="topics-row">
+      <div class="topics-label">// topics covered</div>
+      <span class="chip">Arrays</span>
+      <span class="chip">Strings</span>
+      <span class="chip">Linked Lists</span>
+      <span class="chip">Stacks & Queues</span>
+      <span class="chip">Trees</span>
+      <span class="chip">Graphs</span>
+      <span class="chip">Recursion</span>
+      <span class="chip">Dynamic Programming</span>
+      <span class="chip">Sorting & Searching</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-eyebrow">// projects</div>
+    <h2 class="section-title">Things I've built.</h2>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-type type-fullstack">Full Stack — MERN</div>
+        <h3>ATM Website</h3>
+        <p>A full-featured ATM simulation web app with secure user authentication, balance management, and transaction history. Built with a focus on data integrity and realistic banking logic.</p>
+        <div class="project-tags">
+          <span class="project-tag">MongoDB</span>
+          <span class="project-tag">Express</span>
+          <span class="project-tag">React</span>
+          <span class="project-tag">Node.js</span>
+          <span class="project-tag">JWT Auth</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type type-fullstack">Full Stack — MERN</div>
+        <h3>Job Tracker</h3>
+        <p>A job application tracking dashboard that lets users add, update, and manage job applications with status pipelines, filters, and a clean, responsive UI.</p>
+        <div class="project-tags">
+          <span class="project-tag">MongoDB</span>
+          <span class="project-tag">Express</span>
+          <span class="project-tag">React</span>
+          <span class="project-tag">Node.js</span>
+          <span class="project-tag">REST API</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type type-frontend">Frontend</div>
+        <h3>Portfolio Website</h3>
+        <p>This very site — designed and built from scratch with clean HTML, CSS, and a bit of personality. No frameworks, just fundamentals.</p>
+        <div class="project-tags">
+          <span class="project-tag">HTML</span>
+          <span class="project-tag">CSS</span>
+          <span class="project-tag">JavaScript</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type type-inprogress">In Progress</div>
+        <h3>Next Project</h3>
+        <p>Actively exploring new ideas in the MERN ecosystem — thinking about real-time apps with Socket.io, or adding payment integration to a future e-commerce project.</p>
+        <div class="project-tags">
+          <span class="project-tag">TBD</span>
+          <span class="project-tag">In Progress</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-eyebrow">// contact</div>
+    <h2 class="contact-headline">Let's build<br><span>something real.</span></h2>
+    <p class="contact-sub">Whether it's an internship, a collab project, or just a conversation about MERN stack development — I'm always up for it.</p>
+    <div class="contact-links">
+      <a href="mailto:kanikagopalakrishnamoorthy@email.com" class="btn btn-primary">kanikagopalakrishnamoorthy@email.com</a>
+      <a href="https://github.com/kanikaeee-code/" target="_blank" class="btn btn-ghost">GitHub</a>
+      <a href="https://linkedin.com/" target="_blank" class="btn btn-ghost">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 Kanika</span>
+    <span>MERN Stack Developer</span>
+  </footer>
+
+</body>
+</html>
